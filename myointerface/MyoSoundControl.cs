@@ -15,10 +15,10 @@ namespace myointerface
         IChannel Channel;
         IHub Hub;
         MainWindow Window;
-        Dictionary<IPoseSequence, SoundPlayer> PoseToSound = new Dictionary<IPoseSequence, SoundPlayer>();
+        Dictionary<Pose, SoundPlayer> PoseToSound = new Dictionary<Pose, SoundPlayer>();
 
         //testing values
-        string SoundDir = "Sound"; //relative to CWD
+        
 
         public MyoSoundControl(MainWindow Gui)
         {
@@ -35,9 +35,10 @@ namespace myointerface
                 e.Myo.PoseChanged += Myo_PoseChanged;
                 e.Myo.Locked += Myo_Locked;
                 e.Myo.Unlocked += Myo_Unlocked;
+                Pose testpose = Pose.Fist;
                 IPoseSequence testsequence = PoseSequence.Create(e.Myo, Pose.Fist, Pose.FingersSpread);
                 testsequence.PoseSequenceCompleted += Testsequence_PoseSequenceCompleted;
-                this.PoseToSound[testsequence] = new SoundPlayer("./Sound/Mario.wav");
+                this.PoseToSound[testpose] = new SoundPlayer("./Sound/Mario.wav");
             };
 
             // listen for when the Myo disconnects
@@ -53,7 +54,7 @@ namespace myointerface
 
         private void Testsequence_PoseSequenceCompleted(object sender, PoseSequenceEventArgs e)
         {
-            this.PoseToSound[(IPoseSequence)sender].Play();
+            //this.PoseToSound[(IPoseSequence)sender].Play();
         }
 
         public void Run()
@@ -63,8 +64,10 @@ namespace myointerface
         #region Event Handlers
         private void Myo_PoseChanged(object sender, PoseEventArgs e)
         {
-            Console.WriteLine("{0} arm Myo detected {1} pose!", e.Myo.Arm, e.Myo.Pose);
+            //Console.WriteLine("{0} arm Myo detected {1} pose!", e.Myo.Arm, e.Myo.Pose);
             //System.Windows.Forms.MessageBox.Show("pose {0}", e.Myo.Pose.ToString());
+            if (PoseToSound.ContainsKey(e.Pose))
+                PoseToSound[e.Pose].Play(); 
         }
 
         private void Myo_Unlocked(object sender, MyoEventArgs e)
