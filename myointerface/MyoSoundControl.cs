@@ -16,6 +16,7 @@ namespace myointerface
         IHub Hub;
         MainWindow Window;
         Dictionary<Pose, SoundPlayer> PoseToSound = new Dictionary<Pose, SoundPlayer>();
+        Dictionary<IPoseSequence, SoundPlayer> PoseSequenceToSound = new Dictionary<IPoseSequence, SoundPlayer>();
 
         //testing values
         
@@ -35,10 +36,17 @@ namespace myointerface
                 e.Myo.PoseChanged += Myo_PoseChanged;
                 e.Myo.Locked += Myo_Locked;
                 e.Myo.Unlocked += Myo_Unlocked;
-                Pose testpose = Pose.Fist;
-                IPoseSequence testsequence = PoseSequence.Create(e.Myo, Pose.Fist, Pose.FingersSpread);
-                testsequence.PoseSequenceCompleted += Testsequence_PoseSequenceCompleted;
-                this.PoseToSound[testpose] = new SoundPlayer("./Sound/Mario.wav");
+                
+                //Posing Tests
+                this.PoseToSound[Pose.Fist] = new SoundPlayer("./Sound/Mario.wav");
+                this.PoseToSound[Pose.WaveIn] = new SoundPlayer("./Sound/Glass.wav");
+                this.PoseToSound[Pose.WaveOut] = new SoundPlayer("./Sound/Slap.wav");
+                //Sequence Test
+                //IPoseSequence testsequence = PoseSequence.Create(e.Myo, Pose.Fist, Pose.FingersSpread);
+                //testsequence.PoseSequenceCompleted += Testsequence_PoseSequenceCompleted;
+                //this.PoseSequenceToSound[testsequence] = new SoundPlayer("./Sound/Mario.wav");
+
+               
             };
 
             // listen for when the Myo disconnects
@@ -54,7 +62,7 @@ namespace myointerface
 
         private void Testsequence_PoseSequenceCompleted(object sender, PoseSequenceEventArgs e)
         {
-            //this.PoseToSound[(IPoseSequence)sender].Play();
+            this.PoseSequenceToSound[(IPoseSequence)sender].Play();
         }
 
         public void Run()
@@ -66,6 +74,8 @@ namespace myointerface
         {
             //Console.WriteLine("{0} arm Myo detected {1} pose!", e.Myo.Arm, e.Myo.Pose);
             //System.Windows.Forms.MessageBox.Show("pose {0}", e.Myo.Pose.ToString());
+            ((IMyo)sender).Unlock(UnlockType.Hold);
+
             if (PoseToSound.ContainsKey(e.Pose))
                 PoseToSound[e.Pose].Play(); 
         }
@@ -77,6 +87,7 @@ namespace myointerface
 
         private void Myo_Locked(object sender, MyoEventArgs e)
         {
+            ((IMyo)sender).Unlock();
             Console.WriteLine("{0} arm Myo has locked!", e.Myo.Arm);
         }
         #endregion
