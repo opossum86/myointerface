@@ -6,14 +6,20 @@ using System.Threading.Tasks;
 using MyoSharp.Communication;
 using MyoSharp.Device;
 using MyoSharp.Exceptions;
+using MyoSharp.Poses;
 
 namespace myointerface
 {
     public class MyoSoundControl
     {
-        private IChannel Channel;
-        private IHub Hub;
-        private MainWindow Window;
+        IChannel Channel;
+        IHub Hub;
+        MainWindow Window;
+        Dictionary<IPoseSequence, SoundPlayer> PoseToSound = new Dictionary<IPoseSequence, SoundPlayer>();
+
+        //testing values
+        string SoundDir = "Sound"; //relative to CWD
+
         public MyoSoundControl(MainWindow Gui)
         {
             this.Window = Gui;
@@ -29,6 +35,9 @@ namespace myointerface
                 e.Myo.PoseChanged += Myo_PoseChanged;
                 e.Myo.Locked += Myo_Locked;
                 e.Myo.Unlocked += Myo_Unlocked;
+                IPoseSequence testsequence = PoseSequence.Create(e.Myo, Pose.Fist, Pose.FingersSpread);
+                testsequence.PoseSequenceCompleted += Testsequence_PoseSequenceCompleted;
+                this.PoseToSound[testsequence] = new SoundPlayer("./Sound/Mario.wav");
             };
 
             // listen for when the Myo disconnects
@@ -39,23 +48,31 @@ namespace myointerface
                 e.Myo.Locked -= Myo_Locked;
                 e.Myo.Unlocked -= Myo_Unlocked;
             };
+            
         }
+
+        private void Testsequence_PoseSequenceCompleted(object sender, PoseSequenceEventArgs e)
+        {
+            this.PoseToSound[(IPoseSequence)sender].Play();
+        }
+
         public void Run()
         {
             Channel.StartListening();
         }
         #region Event Handlers
-        private static void Myo_PoseChanged(object sender, PoseEventArgs e)
+        private void Myo_PoseChanged(object sender, PoseEventArgs e)
         {
             Console.WriteLine("{0} arm Myo detected {1} pose!", e.Myo.Arm, e.Myo.Pose);
+            //System.Windows.Forms.MessageBox.Show("pose {0}", e.Myo.Pose.ToString());
         }
 
-        private static void Myo_Unlocked(object sender, MyoEventArgs e)
+        private void Myo_Unlocked(object sender, MyoEventArgs e)
         {
             Console.WriteLine("{0} arm Myo has unlocked!", e.Myo.Arm);
         }
 
-        private static void Myo_Locked(object sender, MyoEventArgs e)
+        private void Myo_Locked(object sender, MyoEventArgs e)
         {
             Console.WriteLine("{0} arm Myo has locked!", e.Myo.Arm);
         }
