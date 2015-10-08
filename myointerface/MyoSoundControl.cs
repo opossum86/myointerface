@@ -87,7 +87,7 @@ namespace myointerface
 
         private void Myo_Locked(object sender, MyoEventArgs e)
         {
-            ((IMyo)sender).Unlock();
+            ((IMyo)sender).Unlock(UnlockType.Timed);
             Console.WriteLine("{0} arm Myo has locked!", e.Myo.Arm);
         }
         #endregion
