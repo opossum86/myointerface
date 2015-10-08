@@ -25,6 +25,7 @@ namespace myointerface
         public MyoSoundControl(MainWindow Gui)
         {
             this.Window = Gui;
+            
             this.Channel = MyoSharp.Communication.Channel.Create(
                 ChannelDriver.Create(ChannelBridge.Create(),
                 MyoErrorHandlerDriver.Create(MyoErrorHandlerBridge.Create())));
@@ -66,9 +67,14 @@ namespace myointerface
                 e.Myo.Unlocked -= Myo_Unlocked;
             };            
         }
-        ~MyoSoundControl()
+
+        public void Quit(object sender, EventArgs e)
         {
             this.myo.Lock();
+        }
+        ~MyoSoundControl()
+        {
+            
         }
         private void PoseSequenceCompleted(object sender, PoseSequenceEventArgs e)
         {
