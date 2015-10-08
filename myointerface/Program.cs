@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 using MyoSharp.Communication;
 using MyoSharp.Device;
-//using MyoSharp.ConsoleSample.Internal;
 using MyoSharp.Exceptions;
 using System.Windows.Forms;
 
