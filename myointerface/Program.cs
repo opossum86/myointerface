@@ -20,7 +20,10 @@ namespace myointerface
             Controller.Run();
             Application.EnableVisualStyles();
             Application.Run(Window);
+            Application.ApplicationExit += Controller.Quit;
         }
+
+        
         
     }
 
