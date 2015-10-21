@@ -15,10 +15,10 @@ namespace myointerface
     {
         static void Main(string[] args)
         {
-            MainWindow Window = new MainWindow();
-            MyoSoundControl Controller = new MyoSoundControl(Window);
+            MainWindow Window = new MainWindow(); //Forms intialisieren
+            MyoSoundControl Controller = new MyoSoundControl(Window); //objekt der Klasse Myosoundcontrol
             Controller.Run();
-            Application.EnableVisualStyles();
+            Application.EnableVisualStyles(); //zugriff auf steuerelemente, farben etc. aus der Forms (Windows)
             Application.Run(Window);
         }
         

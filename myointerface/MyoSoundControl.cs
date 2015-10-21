@@ -12,19 +12,19 @@ namespace myointerface
 {
     public class MyoSoundControl
     {
+        //folgende Interfaces werden aus dem Baukasten verwendet (SDK)
         IChannel Channel;
         IHub Hub;
         IMyo myo;
-        MainWindow Window;
+        MainWindow Window; //Forms
+        //Bibliothek laden für pose und sequenz
         Dictionary<Pose, SoundPlayer> PoseToSound = new Dictionary<Pose, SoundPlayer>();
         Dictionary<IPoseSequence, SoundPlayer> PoseSequenceToSound = new Dictionary<IPoseSequence, SoundPlayer>();
-
-        //testing values
-        
 
         public MyoSoundControl(MainWindow Gui)
         {
             this.Window = Gui;
+            //Channel und Hub (Schnittstelle) erzeugen
             this.Channel = MyoSharp.Communication.Channel.Create(
                 ChannelDriver.Create(ChannelBridge.Create(),
                 MyoErrorHandlerDriver.Create(MyoErrorHandlerBridge.Create())));
@@ -39,26 +39,26 @@ namespace myointerface
 
                 this.myo.Unlock(UnlockType.Hold);
 
-                //Posing Tests
-                //this.PoseToSound[Pose.Fist] = new SoundPlayer("./Sound/Mario.wav");
-                //this.PoseToSound[Pose.WaveIn] = new SoundPlayer("./Sound/Glass.wav");
-                //this.PoseToSound[Pose.WaveOut] = new SoundPlayer("./Sound/Slap.wav");
-                //Sequence Test
+                //Pose in Dictionary mit Sound verbinden (Soundplayerklasse extra)
+                this.PoseToSound[Pose.Fist] = new SoundPlayer("./Sound/Mario.wav");
+                this.PoseToSound[Pose.WaveIn] = new SoundPlayer("./Sound/Glass.wav");
+                this.PoseToSound[Pose.WaveOut] = new SoundPlayer("./Sound/Slap.wav");
 
-                IPoseSequence sequence0 = PoseSequence.Create(e.Myo, Pose.Fist, Pose.FingersSpread);
-                sequence0.PoseSequenceCompleted += PoseSequenceCompleted;
-                this.PoseSequenceToSound[sequence0] = new SoundPlayer("./Sound/Mario.wav");
+                //Sequence 
 
-                IPoseSequence sequence1 = PoseSequence.Create(e.Myo, Pose.WaveIn, Pose.WaveOut);
-                sequence1.PoseSequenceCompleted += PoseSequenceCompleted;
-                this.PoseSequenceToSound[sequence1] = new SoundPlayer("./Sound/Slap.wav");
+                //IPoseSequence sequence0 = PoseSequence.Create(e.Myo, Pose.Fist, Pose.FingersSpread);
+                //sequence0.PoseSequenceCompleted += PoseSequenceCompleted;
+                //this.PoseSequenceToSound[sequence0] = new SoundPlayer("./Sound/Mario.wav");
 
-                IPoseSequence sequence2 = PoseSequence.Create(e.Myo, Pose.WaveOut, Pose.WaveIn);
-                sequence2.PoseSequenceCompleted += PoseSequenceCompleted;
-                this.PoseSequenceToSound[sequence2] = new SoundPlayer("./Sound/Glass.wav");
+                //IPoseSequence sequence1 = PoseSequence.Create(e.Myo, Pose.WaveIn, Pose.WaveOut);
+                //sequence1.PoseSequenceCompleted += PoseSequenceCompleted;
+                //this.PoseSequenceToSound[sequence1] = new SoundPlayer("./Sound/Slap.wav");
+
+                //IPoseSequence sequence2 = PoseSequence.Create(e.Myo, Pose.WaveOut, Pose.WaveIn);
+                //sequence2.PoseSequenceCompleted += PoseSequenceCompleted;
+                //this.PoseSequenceToSound[sequence2] = new SoundPlayer("./Sound/Glass.wav");
             };
-
-            
+         
             Hub.MyoDisconnected += (sender, e) =>
             {
                 e.Myo.PoseChanged -= Myo_PoseChanged;
@@ -66,9 +66,13 @@ namespace myointerface
                 e.Myo.Unlocked -= Myo_Unlocked;
             };            
         }
-        ~MyoSoundControl()
+        public void Quit(object sender, EventArgs e)
         {
             this.myo.Lock();
+        }
+        ~MyoSoundControl()
+        {
+
         }
         private void PoseSequenceCompleted(object sender, PoseSequenceEventArgs e)
         {
@@ -78,7 +82,7 @@ namespace myointerface
                 PoseSequenceToSound[sequence].Play();
         }
 
-        public void Run()
+        public void Run() // beginnt Daten vom Myoarmband einzulesen
         {
             Channel.StartListening();
         }
@@ -86,7 +90,6 @@ namespace myointerface
 
         private void Myo_PoseChanged(object sender, PoseEventArgs e)
         {
-
             if (PoseToSound.ContainsKey(e.Pose))
                 PoseToSound[e.Pose].Play(); 
         }
