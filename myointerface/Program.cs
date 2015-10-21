@@ -20,7 +20,10 @@ namespace myointerface
             Controller.Run();
             Application.EnableVisualStyles(); //zugriff auf steuerelemente, farben etc. aus der Forms (Windows)
             Application.Run(Window);
+            Application.ApplicationExit += Controller.Quit;
         }
+
+        
         
     }
 

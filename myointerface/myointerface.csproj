@@ -62,9 +62,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SoundPlayer.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="SoundPlayer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

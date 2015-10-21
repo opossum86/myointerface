@@ -6,16 +6,18 @@ using System.Threading.Tasks;
 
 namespace myointerface
 {
-    public class SoundPlayer : System.Media.SoundPlayer
+    public class SoundPlayer : System.Windows.Media.MediaPlayer
     {
+        Uri SoundLocation;
         public string File
         {
             get { return SoundLocation; }
         }
+
         public SoundPlayer(string SoundFile)
         {
-            this.SoundLocation = SoundFile;
-            this.Load();   
+            this.SoundLocation = new Uri(SoundFile);
+            this.Open(SoundLocation);   
         }
     }
 }
